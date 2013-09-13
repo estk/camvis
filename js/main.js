@@ -2,7 +2,7 @@ var rowHeight = 25;
 var height = null;
 var barHeight = 20;
 var legendWidth = 200;
-var axisHeight = 100;
+var axisHeight = 15;
 
 var data = [];
 
