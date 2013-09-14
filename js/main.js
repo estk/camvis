@@ -1,5 +1,8 @@
+(function (globals) {
+  
+"use strict";
+
 var rowHeight = 25;
-var height = null;
 var barHeight = rowHeight - 3;
 var legendWidth = 200;
 var axisHeight = 15;
@@ -30,7 +33,7 @@ function makeGraph () {
     .attr('width', containerWidth)
     .attr('height', function () { return chartHeight + axisHeight; });
 
-  var scale = d3.scale.linear()
+  var xScale = d3.scale.linear()
     .domain([0, ds.max("High")])
     .range([0, graphWidth]);
 
@@ -45,8 +48,8 @@ function makeGraph () {
   chart.selectAll('g').append('rect')
     .attr('fill', function(d){ return d["Color"]; })
     .attr('height', barHeight)
-    .attr('width', function(d) { return scale(d["High"] - d["Low"]); })
-    .attr('x', function(d){ return legendWidth + scale(d["Low"]); })
+    .attr('width', function(d) { return xScale(d["High"] - d["Low"]); })
+    .attr('x', function(d){ return legendWidth + xScale(d["Low"]); })
     .attr('y', 2)
 
   // Labels
@@ -61,12 +64,12 @@ function makeGraph () {
     .text(function(d) { return d["Weight"]; })
     .attr('text-anchor', 'middle')
     .attr('height', 25)
-    .attr('x', function (d) { return legendWidth + scale( (d["High"] + d["Low"])/ 2) })
+    .attr('x', function (d) { return legendWidth + xScale( (d["High"] + d["Low"])/ 2) })
     .attr('y', 18)
 
     // Axes
     var xAxis = d3.svg.axis()
-      .scale(scale)
+      .scale(xScale)
       .tickSize(-chartHeight,0,0);
 
     chart.insert('g', ":first-child")
@@ -89,3 +92,5 @@ ds.fetch({
 });
 
 $(window).resize(makeGraph);
+
+}(this));
