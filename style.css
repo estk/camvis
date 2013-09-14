@@ -1,3 +1,12 @@
+form {
+  margin: 20px;
+}
+
+form select {
+  display: block;
+  margin: auto;
+}
+
 #chart {
   margin: 20px;
 }

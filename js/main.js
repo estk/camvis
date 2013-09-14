@@ -9,9 +9,32 @@ var axisHeight = 15;
 
 var data = [];
 
+var params = function() {
+  var res = {};
+  var q = document.URL.split('?')[1];
+  if (! _.isUndefined(q)) {
+    q = q.split('&');
+    _.each(q, function (p) {
+      p = p.split('=');
+      res[p[0]] = p[1];
+    });
+  }
+  return res;
+}();
+
+var worksheet = function () {
+  switch (params.type) {
+    case "full": return 1;
+    case "small": return 2;
+    case "micro": return 3;
+    case "medium": return 4;
+    default: return 1;
+  }
+}();
+
 var ds = new Miso.Dataset({
   key: "0AvG1nt4wUltfdFZKUmlfSmxWaDdRQVVVaWlGN3hpZlE",
-  worksheet: "1",
+  worksheet: worksheet,
   importer: Miso.Dataset.Importers.GoogleSpreadsheet,
   parser: Miso.Dataset.Parsers.GoogleSpreadsheet
 });
@@ -19,7 +42,7 @@ var ds = new Miso.Dataset({
 
 var error = function() {
   document.getElementById('chart').innerHTML = "Could not load data.";
-}
+};
 
 function makeGraph () {
   var chartHeight = data.length*rowHeight;
@@ -91,6 +114,8 @@ ds.fetch({
   error: error
 });
 
+// Event Map
 $(window).resize(makeGraph);
+$("form").change(function () { this.submit();});
 
 }(this));
