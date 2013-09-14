@@ -1,4 +1,17 @@
+#chart {
+  margin: 20px;
+}
 line {
-  stroke:black;
-  z-index: -2;
+  stroke:grey;
+  stroke-width:1;
+  stroke-dasharray: 10, 5;
+  stroke-linecap:round;
+}
+
+rect {
+  opacity: .5;
+}
+
+g text {
+  -webkit-filter: brightness(2);
 }

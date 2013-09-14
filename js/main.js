@@ -1,6 +1,6 @@
 var rowHeight = 25;
 var height = null;
-var barHeight = 20;
+var barHeight = rowHeight - 3;
 var legendWidth = 200;
 var axisHeight = 15;
 
@@ -54,8 +54,8 @@ function makeGraph () {
     .text(function(d) { return d["Manufacturer"] + " " + d["Model"] + " " + d["Size"]; })
     .attr('text-anchor', 'start')
     .attr('height', 25)
-    .attr('x', 20)
-    .attr('y', 20)
+    .attr('x', 0)
+    .attr('y', rowHeight)
 
   chart.selectAll('g').append('text')
     .text(function(d) { return d["Weight"]; })
