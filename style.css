@@ -1,10 +1,10 @@
 form {
+  text-align: center;
   margin: 20px;
 }
 
-form select {
-  display: block;
-  margin: auto;
+ul {
+  list-style: none;
 }
 
 #chart {
@@ -19,6 +19,8 @@ line {
 
 rect {
   opacity: .5;
+  stroke: black;
+  stroke-width: 2;
 }
 
 g text {

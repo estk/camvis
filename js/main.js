@@ -1,6 +1,3 @@
-(function (globals) {
-  
-"use strict";
 
 var rowHeight = 25;
 var barHeight = rowHeight - 3;
@@ -9,6 +6,7 @@ var axisHeight = 15;
 
 var data = [];
 
+// Get Params
 var params = function() {
   var res = {};
   var q = document.URL.split('?')[1];
@@ -21,30 +19,11 @@ var params = function() {
   }
   return res;
 }();
-
-var worksheet = function () {
-  switch (params.type) {
-    case "full": return 1;
-    case "small": return 2;
-    case "micro": return 3;
-    case "medium": return 4;
-    default: return 1;
-  }
-}();
-
-var ds = new Miso.Dataset({
-  key: "0AvG1nt4wUltfdFZKUmlfSmxWaDdRQVVVaWlGN3hpZlE",
-  worksheet: worksheet,
-  importer: Miso.Dataset.Importers.GoogleSpreadsheet,
-  parser: Miso.Dataset.Parsers.GoogleSpreadsheet
-});
-
-
-var error = function() {
-  document.getElementById('chart').innerHTML = "Could not load data.";
-};
+console.log(params);
 
 function makeGraph () {
+  var max = _.max(data, function(d) { return d["High"]; })["High"];
+  // var min = _(data).min(function(d) {return d["Low"]; });
   var chartHeight = data.length*rowHeight;
 
   var containerWidth = $("#chart").width();
@@ -57,7 +36,7 @@ function makeGraph () {
     .attr('height', function () { return chartHeight + axisHeight; });
 
   var xScale = d3.scale.linear()
-    .domain([0, ds.max("High")])
+    .domain([0, max])
     .range([0, graphWidth]);
 
   chart.selectAll('g')
@@ -74,6 +53,8 @@ function makeGraph () {
     .attr('width', function(d) { return xScale(d["High"] - d["Low"]); })
     .attr('x', function(d){ return legendWidth + xScale(d["Low"]); })
     .attr('y', 2)
+    .attr('rx', 4)
+    .attr('ry', 4);
 
   // Labels
   chart.selectAll('g').append('text')
@@ -81,14 +62,14 @@ function makeGraph () {
     .attr('text-anchor', 'start')
     .attr('height', 25)
     .attr('x', 0)
-    .attr('y', rowHeight)
+    .attr('y', rowHeight);
 
   chart.selectAll('g').append('text')
     .text(function(d) { return d["Weight"]; })
     .attr('text-anchor', 'middle')
     .attr('height', 25)
     .attr('x', function (d) { return legendWidth + xScale( (d["High"] + d["Low"])/ 2) })
-    .attr('y', 18)
+    .attr('y', 18);
 
     // Axes
     var xAxis = d3.svg.axis()
@@ -98,24 +79,61 @@ function makeGraph () {
     chart.insert('g', ":first-child")
       .attr('transform', "translate(" + legendWidth + "," + chartHeight + ')')
       .call(xAxis);
-};
+}
+//---------------------//
 
-var render = function () {
-  this.each(function (row) { 
-    if (row["Model"] !== null) 
-      data.push(row); 
-  });
+var worksheets = [];
+var promises = [];
 
-  makeGraph();
-};
-
-ds.fetch({
-  success: render,
-  error: error
+_.each(params, function (v, k) {
+  if (v) {
+    worksheets.push(k);
+    $('input[name=' + k + ']').attr('checked',true); 
+  }
 });
 
+
+_.each(worksheets, function (w) {
+  var dfd = new $.Deferred();
+  var ds = new Miso.Dataset({
+    key: "0AvG1nt4wUltfdFZKUmlfSmxWaDdRQVVVaWlGN3hpZlE",
+    worksheet: w,
+    importer: Miso.Dataset.Importers.GoogleSpreadsheet,
+    parser: Miso.Dataset.Parsers.GoogleSpreadsheet
+  });
+
+  ds.fetch({
+    success: function () { append(this).then(function() {dfd.resolve();}); },
+    error: function () {dfd.fail(this); }
+  });
+
+  promises.push(dfd.promise());
+  
+});
+
+$.when.apply($, promises)
+  .then(function() {makeGraph();})
+  .fail(error);
+
+
+var append = function (a) {
+  var dfd = new $.Deferred();
+  var ds = this;
+  a.each(function (row) { 
+    if (row["Model"] !== null) 
+      data.push(row);
+  });
+  dfd.resolve(data);;
+  return dfd.promise();
+}
+
+var error = function() {
+  document.getElementById('chart').innerHTML = "Could not load data.";
+};
+
+
+
 // Event Map
-$(window).resize(makeGraph);
+$(window).resize(function () {makeGraph()});
 $("form").change(function () { this.submit();});
 
-}(this));
