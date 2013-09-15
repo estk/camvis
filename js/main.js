@@ -58,7 +58,8 @@ function makeGraph () {
 
   // Labels
   chart.selectAll('g').append('text')
-    .text(function(d) { return d["Manufacturer"] + " " + d["Model"] + " " + d["Size"]; })
+    .text(function(d) { return d["Model"] + " " + d["Size"]; })
+    // .attr('title', function (d) { return d["Manufacturer"]; })
     .attr('text-anchor', 'start')
     .attr('height', 25)
     .attr('x', 0)
