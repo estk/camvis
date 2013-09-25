@@ -1,3 +1,11 @@
+body {
+  background-color: #fdf6e3 !important;
+  color: #93a1a1 !important;
+}
+text {
+  fill: #93a1a1;
+}
+
 form {
   text-align: center;
   margin: 20px;
@@ -18,7 +26,10 @@ line {
 }
 
 rect {
-  opacity: .6;
-  stroke: black;
+  stroke: none;
   stroke-width: 2;
+}
+
+text[text-anchor = middle] {
+  fill: white;
 }

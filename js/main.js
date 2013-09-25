@@ -21,6 +21,22 @@ var params = function() {
 }();
 console.log(params);
 
+var colorMap = function (color) {
+  var map = {
+  gold:  "#b58900",
+  orange:  "#cb4b16",
+  red:  "#dc322f",
+  magenta:  "#d33682",
+  purple:  "#6c71c4",
+  blue:  "#268bd2",
+  cyan:  "#2aa198",
+  green:  "#859900",
+  gray: "#839496"
+  };
+
+  return map[color.toLowerCase()];
+};
+
 function makeGraph () {
   var max = _.max(data, function(d) { return d["High"]; })["High"];
   // var min = _(data).min(function(d) {return d["Low"]; });
@@ -48,7 +64,7 @@ function makeGraph () {
     });
 
   chart.selectAll('g').append('rect')
-    .attr('fill', function(d){ return d["Color"]; })
+    .attr('fill', function(d){ return colorMap( d["Color"] ); })
     .attr('height', barHeight)
     .attr('width', function(d) { return xScale(d["High"] - d["Low"]); })
     .attr('x', function(d){ return legendWidth + xScale(d["Low"]); })
